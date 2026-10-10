@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/takan003/module-sdk/module.schema.json",
+  "title": "campus-toolkit 功能模組 manifest（module.json）",
+  "description": "規格來源：docs/主程式模組與功能模組.md §3.2、docs/模組市集與外掛開發.md §3.3。市集與安裝端以本 schema ＋ module:check 雙邊驗證。",
+  "type": "object",
+  "required": ["value", "label", "kind", "status", "description", "href", "author", "provides", "routes", "permission"],
+  "additionalProperties": true,
+  "properties": {
+    "value": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]*$", "description": "全域唯一模組代碼（camelCase）" },
+    "label": { "type": "string", "minLength": 1 },
+    "kind": { "const": "optional" },
+    "status": { "enum": ["planned", "building", "live"], "description": "展示資訊；可否啟用由超級管理員總開關決定" },
+    "description": { "type": "string", "minLength": 1 },
+    "href": { "type": "string", "description": "模組入口路由；live 時不可為空" },
+    "author": {
+      "type": "object",
+      "required": ["author", "authorUrl", "version", "releasedAt"],
+      "properties": {
+        "author": { "type": "string" },
+        "authorUrl": { "type": "string" },
+        "version": { "type": "string", "minLength": 1 },
+        "releasedAt": { "type": "string" }
+      }
+    },
+    "provides": {
+      "type": "object",
+      "required": ["student", "parent", "staff", "admin"],
+      "properties": {
+        "student": { "type": "boolean" },
+        "parent": { "type": "boolean" },
+        "staff": { "type": "boolean" },
+        "admin": { "type": "boolean" }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kind", "path"],
+        "properties": {
+          "kind": { "enum": ["page", "api"] },
+          "path": {
+            "type": "string",
+            "description": "page 需落於 /admin /student /parent /staff 之一；api 需以 /api/ 開頭；禁結尾斜線"
+          }
+        }
+      }
+    },
+    "permission": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["new", "reuse"] },
+        "value": { "type": "string" },
+        "category": { "enum": ["帳號與權限", "校務資料", "系統與紀錄"] }
+      }
+    },
+    "icon": { "type": "string", "description": "ModuleIcon key（未註冊自動 fallback）" },
+    "rateLimits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "limit", "windowMs"],
+        "properties": {
+          "key": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$", "description": "UPPER_SNAKE，需以模組代碼 UPPER_SNAKE 前綴開頭" },
+          "limit": { "type": "integer", "minimum": 1 },
+          "windowMs": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "auditActions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "snake_case，需以模組代碼前綴開頭" }
+    },
+    "dataCollections": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "宣告即承諾：只准讀寫所列集合；announcements／calendarEvents 掛勾集合自動豁免但禁直寫"
+    },
+    "hooks": {
+      "type": "array",
+      "items": { "enum": ["announcements", "calendar"] },
+      "description": "已實作掛勾；未宣告過的值＝警示可安裝【E9】"
+    },
+    "contractVersion": { "type": "integer", "minimum": 1, "description": "開發時所依契約版本；＞主程式即拒絕安裝" },
+    "minHostVersion": { "type": "string", "pattern": "^\\d+\\.\\d+$", "description": "最低主程式版本" },
+    "license": { "type": "string" },
+    "repository": { "type": "string" },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "firestoreIndexes": {
+      "type": "array",
+      "description": "選填：複合索引宣告（提示性）；欄位順序即建索引順序【E14】",
+      "items": {
+        "type": "object",
+        "required": ["collection", "fields"],
+        "properties": {
+          "collection": { "type": "string" },
+          "fields": { "type": "array", "items": { "type": "string" }, "minItems": 2 }
+        }
+      }
+    }
+  }
+}

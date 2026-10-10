@@ -1,0 +1,13 @@
+{
+  "name": "module-sdk",
+  "version": "0.1.0",
+  "description": "數位校園工具箱選用（外掛）功能模組 SDK：契約常數、型別快照、manifest schema、module:check 靜態掃描、影子 tsc",
+  "type": "module",
+  "bin": { "module-check": "bin/module-check.mjs" },
+  "scripts": {
+    "module:check": "node bin/module-check.mjs",
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}

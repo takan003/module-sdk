@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "paths": { "@/*": ["./snapshots/*"] },
+    "types": [],
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["snapshots/**/*.d.ts"]
+}
