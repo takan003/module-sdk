@@ -63,6 +63,20 @@ export function checkModule(moduleDir, opts = {}) {
   errors.push(...result.errors);
   warnings.push(...result.warnings);
 
+  // 禁新增依賴【E10】§6.3-5：package.json.dependencies 非空即拒絕（devDependencies 為工具鍵，放行）
+  const pkgPath = path.join(root, "package.json");
+  if (fs.existsSync(pkgPath)) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8").replace(/^﻿/, ""));
+      const deps = pkg && pkg.dependencies && typeof pkg.dependencies === "object" ? Object.keys(pkg.dependencies) : [];
+      if (deps.length > 0) {
+        errors.push(`package.json：dependencies 非空（${deps.join("、")}）——模組禁新增依賴【E10】（devDependencies 不受限）`);
+      }
+    } catch {
+      warnings.push("package.json 解析失敗（略過依賴檢查）");
+    }
+  }
+
   // 套件體積（§6.3 附錄 A #11）
   const size = packageSize(root);
   if (size > PACKAGE_SIZE_LIMIT) {
