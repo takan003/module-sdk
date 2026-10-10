@@ -51,6 +51,7 @@ export const ALLOWED_HOST_IMPORTS = [
   "@/lib/api-error",
   "@/lib/announcements",
   "@/lib/calendar",
+  "@/lib/module-gate",
   "@/types/feature-modules",
   "@/components/AdminSectionShell",
   "@/components/ModuleIcon",
