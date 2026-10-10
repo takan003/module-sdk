@@ -7,6 +7,10 @@ export interface SessionPayload {
   uid: string;
   role: UserRole;
   name?: string;
+  /** 登入顯示名稱（主程式驗證基線附上） */
+  displayName?: string;
+  /** 登入帳號（如校務信箱） */
+  account?: string;
   adminAttribute?: string;
   adminModules?: string[];
   [key: string]: unknown;

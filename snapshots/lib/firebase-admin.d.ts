@@ -51,7 +51,7 @@ export interface Firestore {
 
 export interface FirestoreTransaction {
   get(ref: FirestoreRef): Promise<FirestoreDoc>;
-  getCollection(collection: FirestoreQuery): Promise<{ docs: FirestoreDoc[] }>;
+  get(query: FirestoreQuery): Promise<{ docs: FirestoreDoc[] }>;
   set(ref: FirestoreRef, data: Record<string, unknown>, options?: { merge?: boolean }): FirestoreTransaction;
   update(ref: FirestoreRef, data: Record<string, unknown>): FirestoreTransaction;
   delete(ref: FirestoreRef): FirestoreTransaction;

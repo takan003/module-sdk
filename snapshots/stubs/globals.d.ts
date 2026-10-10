@@ -3,6 +3,10 @@ declare namespace JSX {
   interface IntrinsicElements {
     [elemName: string]: Record<string, unknown>;
   }
+  /** JSX 元素通用屬性（自訂元件也適用 key） */
+  interface IntrinsicAttributes {
+    key?: string | number;
+  }
   interface Element {}
   interface ElementClass {}
 }

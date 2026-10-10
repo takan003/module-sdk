@@ -10,6 +10,7 @@ declare module "next/server" {
     text(): Promise<string>;
   };
   export class NextResponse {
+    constructor(body?: unknown, init?: { status?: number; headers?: Record<string, string> });
     static json(data: unknown, init?: { status?: number; headers?: Record<string, string> }): NextResponse;
     static redirect(url: string | URL, status?: number): NextResponse;
     status: number;
