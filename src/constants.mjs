@@ -52,9 +52,13 @@ export const ALLOWED_HOST_IMPORTS = [
   "@/lib/announcements",
   "@/lib/calendar",
   "@/lib/module-gate",
+  "@/lib/data-saver",
   "@/types/feature-modules",
+  "@/types/users",
+  "@/types/announcements",
   "@/components/AdminSectionShell",
   "@/components/ModuleIcon",
+  "@/components/RevealListCard",
 ];
 
 /** 明確禁止的宿主核心檔（§6.3-1：註冊表寫入面、設定層、圖示表等） */

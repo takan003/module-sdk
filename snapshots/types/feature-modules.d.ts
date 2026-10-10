@@ -31,6 +31,6 @@ export function isFeatureModuleVisible(
   value: string,
   role: UserRole,
   display: Partial<Record<UserRole, boolean>> | undefined,
-  options?: { isSuper?: boolean }
+  options?: { isSuper?: boolean; enabled?: Record<string, boolean> }
 ): boolean;
 export const FEATURE_MODULES: readonly FeatureModuleMeta[];

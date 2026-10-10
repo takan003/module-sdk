@@ -17,6 +17,8 @@ export interface FirestoreRef {
   collection(name: string): FirestoreCollection;
   get(): Promise<FirestoreDoc>;
   set(data: Record<string, unknown>, options?: { merge?: boolean }): Promise<unknown>;
+  update(data: Record<string, unknown>): Promise<unknown>;
+  delete(): Promise<unknown>;
 }
 
 export interface FirestoreQuery {
