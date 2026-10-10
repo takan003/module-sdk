@@ -12,7 +12,13 @@ export interface SessionPayload {
   [key: string]: unknown;
 }
 
-export type VerifiedSession = SessionPayload & { expiresAt?: number };
+export type VerifiedSession = SessionPayload & {
+  /** 名冊條目（宿主驗證時附上；取年級/班級等名冊欄位用，空值需自行防護） */
+  __entry?: Record<string, unknown> | null;
+  /** 用戶文件（寬鬆型別；非必要勿用） */
+  __user?: Record<string, unknown> | null;
+  expiresAt?: number;
+};
 
 export type AuthDenial = { status: 401; message: string } | { status: 403; message: string };
 
