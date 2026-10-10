@@ -7,7 +7,7 @@
 export const MODULE_CONTRACT_VERSION = 1;
 
 /** 本 SDK 對應的宿主介面快照版本（對應主程式版本） */
-export const HOST_SURFACE_SNAPSHOT = "0.389";
+export const HOST_SURFACE_SNAPSHOT = "0.391";
 
 /** 頁面前綴白名單（無此四前綴之一即無 proxy 角色閘門）【E13】 */
 export const PAGE_PREFIXES = ["/admin", "/student", "/parent", "/staff"];
