@@ -13,6 +13,7 @@ import {
   ALLOWED_NPM_PREFIXES,
   FORBIDDEN_HOST_IMPORTS,
   HOOK_COLLECTIONS,
+  RESERVED_COLLECTIONS,
 } from "./constants.mjs";
 
 const CODE_EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
@@ -190,10 +191,8 @@ export function scanCode(root, manifest) {
       if (name) seenCollections.add(name);
     }
     for (const name of seenCollections) {
-      if (name === "settings") {
-        warnings.push(
-          `${rel}：直接存取 settings 集合（含 settings/system）——v1 相容放行，v2 請改走宿主公開面【§6.3-2】`
-        );
+      if (RESERVED_COLLECTIONS.includes(name)) {
+        errors.push(`${rel}：存取宿主保留集合「${name}」——模組不得直接讀寫【P0-2】`);
         continue;
       }
       // R3：掛勾集合禁直寫（一律走 publishFromModule／publishScheduleFromModule）

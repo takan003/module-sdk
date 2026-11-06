@@ -10,6 +10,7 @@ import {
   KNOWN_HOOKS,
   MODULE_CONTRACT_VERSION,
   PAGE_PREFIXES,
+  RESERVED_COLLECTIONS,
 } from "./constants.mjs";
 
 const CATEGORIES = ["帳號與權限", "校務資料", "系統與紀錄"];
@@ -220,6 +221,10 @@ export function validateManifest(m, opts = {}) {
       m.dataCollections.forEach((name, i) => {
         if (!isNonEmptyString(name) || !COLLECTION_RE.test(name)) {
           at(`dataCollections[${i}] 需為合法集合名（英數字與 _-）`);
+          return;
+        }
+        if (RESERVED_COLLECTIONS.includes(name)) {
+          at(`dataCollections 不可宣告宿主保留集合「${name}」【P0-2】`);
           return;
         }
         if (seen.has(name)) at(`dataCollections 重複：${name}`);

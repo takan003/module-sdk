@@ -275,6 +275,31 @@ const cases = [
         "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function read() {\n  return getAdminDb().doc("users/u1").get();\n}\n`,
       }),
   },
+  {
+    n: 24,
+    title: "宣告宿主保留集合 users",
+    expect: "fail",
+    keyword: "宿主保留集合",
+    run: () => buildCase(baseManifest({ dataCollections: ["users"] })),
+  },
+  {
+    n: 25,
+    title: "宣告宿主保留集合 settings",
+    expect: "fail",
+    keyword: "宿主保留集合",
+    run: () => buildCase(baseManifest({ dataCollections: ["settings"] })),
+  },
+  {
+    n: 26,
+    title: "doc 路徑存取宿主保留集合 settings",
+    expect: "fail",
+    keyword: "宿主保留集合",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: ["demoEvents"] }), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function read() {\n  return getAdminDb().doc("settings/system").get();\n}\n`,
+      }),
+  },
 ];
 
 // —— 路由撞名快照檢查尚未併入 check.mjs：以 #15 為驅動補上 ——（見下方 assert）

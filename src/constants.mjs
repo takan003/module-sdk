@@ -13,7 +13,7 @@ export const MODULE_CONTRACT_VERSION = 1;
 export const HOST_SURFACE_SNAPSHOT = "0.391";
 
 /** module:check 預設比對的宿主版本（allowlist 已先對齊 0.636；snapshots 待重生） */
-export const DEFAULT_HOST_VERSION = "0.638";
+export const DEFAULT_HOST_VERSION = "0.639";
 
 /** 頁面前綴白名單（無此四前綴之一即無 proxy 角色閘門）【E13】 */
 export const PAGE_PREFIXES = ["/admin", "/student", "/parent", "/staff"];
@@ -23,6 +23,9 @@ export const KNOWN_HOOKS = ["announcements", "calendar"];
 
 /** 掛勾集合豁免：宣告 dataCollections 時自動含入，不需也不可自行直寫 */
 export const HOOK_COLLECTIONS = ["announcements", "calendarEvents"];
+
+/** 宿主保留集合：模組不得宣告或直接存取（P0-2） */
+export const RESERVED_COLLECTIONS = ["users", "settings", "activityLog", "revokedJTIs"];
 
 /** 內建／管理端模組代碼快照（value 撞名即拒絕） */
 export const BUILTIN_VALUES = [
