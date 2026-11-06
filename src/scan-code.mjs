@@ -97,7 +97,9 @@ function scanRouteGuards(root, rel, text, errors) {
     if (!/requireRole\s*\(|requireAdminModule\s*\(|requireModulePermission\s*\(/.test(text)) {
       errors.push(`${rel}：缺少鑑權（requireRole／requireAdminModule／requireModulePermission）【P0-8】`);
     }
-    const mutating = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/.test(text);
+    const mutating =
+      /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/.test(text) ||
+      /export\s+const\s+(POST|PUT|PATCH|DELETE)\s*=/.test(text);
     if (mutating && !/assertSameOrigin\s*\(/.test(text)) {
       errors.push(`${rel}：寫入方法缺少 CSRF（assertSameOrigin）【P0-8】`);
     }
