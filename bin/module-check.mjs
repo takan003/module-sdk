@@ -9,11 +9,11 @@
  */
 
 import { checkModule } from "../src/check.mjs";
-import { HOST_SURFACE_SNAPSHOT } from "../src/constants.mjs";
+import { DEFAULT_HOST_VERSION, HOST_SURFACE_SNAPSHOT } from "../src/constants.mjs";
 
 const args = process.argv.slice(2);
 const json = args.includes("--json");
-let hostVersion = HOST_SURFACE_SNAPSHOT;
+let hostVersion = DEFAULT_HOST_VERSION;
 let target = "";
 
 for (let i = 0; i < args.length; i++) {

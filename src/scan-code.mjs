@@ -107,7 +107,11 @@ export function scanCode(root, manifest) {
     while ((col = COLLECTION_RE.exec(text))) seenCollections.add(col[1]);
     for (const name of seenCollections) {
       if (name === "settings") {
-        errors.push(`${rel}：禁直接讀寫 settings 集合（含 settings/system）——走宿主公開面【§6.3-2】`);
+        // v1 相容：E／F／G 目前有直接讀 settings 的實作；E 是 canonical 範例。
+        // v2 再收斂為只准走宿主公開面，屆時才升為 error。
+        warnings.push(
+          `${rel}：直接存取 settings 集合（含 settings/system）——v1 相容放行，v2 請改走宿主公開面【§6.3-2】`
+        );
         continue;
       }
       // R3：掛勾集合禁直寫（一律走 publishFromModule／publishScheduleFromModule）

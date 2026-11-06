@@ -26,10 +26,18 @@ node bin/module-check.mjs <模組資料夾> [--host-version 0.388] [--json]
 node bin/module-shadow-tsc.mjs <模組資料夾> --tsc <tsc路徑>
 ```
 
+## 契約權威順序（v1）
+
+**A（主程式）與官方範例模組 E／F／G 的實際可運作 > B（module-sdk）。**
+
+B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F／G 衝突時，修改 B，不是修改 E／F／G。
+`npm test` 會用 E／F／G 當 golden modules（找不到時 skip；可用 `GOLDEN_MODULES_DIR` 指定路徑）。
+
 ## 穩定性承諾【E4】
 
 同一 `contractVersion`（目前 `1`）內，§3.3 允許面**只增不改不刪**；破壞性變更才遞增版本。
-`snapshots/` 對應宿主 `0.388`；宿主改公開面時更新快照並 bump `HOST_SURFACE_SNAPSHOT`。
+`snapshots/` 目前仍對應宿主 `0.391`（待重生）；`module:check` 預設比對宿主 `0.628`（`DEFAULT_HOST_VERSION`）。
+第一階段已先把 allowlist 與官方 E／F／G 對齊；影子 tsc／snapshots 是下一階段。
 
 ## 邊界（讀懂這段才不會誤用）
 

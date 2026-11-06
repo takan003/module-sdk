@@ -4,6 +4,7 @@
  * 每案例動態建 tmp 模組資料夾 → 跑 checkModule → 比對期望（pass／warn／fail＋關鍵字）。
  */
 
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -144,7 +145,8 @@ const cases = [
     keyword: "超過上限",
     run: () => {
       const dir = buildCase(baseManifest());
-      fs.writeFileSync(path.join(dir, "big.bin"), Buffer.alloc(600 * 1024, 1));
+      // 用不可壓縮的隨機資料，確保 gzip 後仍超過 500KB
+      fs.writeFileSync(path.join(dir, "big.bin"), crypto.randomBytes(600 * 1024));
       return dir;
     },
   },

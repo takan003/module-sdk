@@ -6,25 +6,40 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 import { PACKAGE_SIZE_LIMIT } from "./constants.mjs";
 import { validateManifest } from "./validate-manifest.mjs";
 import { listCodeFiles, scanCode } from "./scan-code.mjs";
 
 const EXCLUDE_DIRS = new Set([".git", "node_modules", ".next", "dist", "build"]);
+/** 讀進記憶體前的原始大小上限；超過直接回原始大小（必然超過套件上限） */
+const RAW_SCAN_LIMIT = 10 * 1024 * 1024;
 
-/** 計算套件總體積（bytes）：排除 .git／node_modules／.next（近似 zip 內容） */
+/**
+ * 計算套件壓縮後體積估計（bytes）：排除 .git／node_modules／.next，
+ * 以檔名＋內容做 gzip level 9。文件／市集講的是「壓縮後 ≤500KB」，
+ * 用未壓縮原始碼總和會誤殺官方模組（例如 selfDirectedLearning 原始碼 654KB、zip 192KB）。
+ */
 export function packageSize(root) {
-  let total = 0;
+  const chunks = [];
+  let raw = 0;
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (entry.name.startsWith(".") || EXCLUDE_DIRS.has(entry.name)) continue;
       const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) walk(full);
-      else total += fs.statSync(full).size;
+      if (entry.isDirectory()) {
+        walk(full);
+        continue;
+      }
+      const rel = path.relative(root, full).split(path.sep).join("/");
+      raw += fs.statSync(full).size;
+      chunks.push(Buffer.from(`${rel}\0`));
+      chunks.push(fs.readFileSync(full));
     }
   };
   walk(root);
-  return total;
+  if (raw > RAW_SCAN_LIMIT) return raw;
+  return zlib.gzipSync(Buffer.concat(chunks), { level: 9 }).length;
 }
 
 /**

@@ -6,8 +6,14 @@
 /** 契約版本：與 manifest.contractVersion 比對，過新即拒絕 */
 export const MODULE_CONTRACT_VERSION = 1;
 
-/** 本 SDK 對應的宿主介面快照版本（對應主程式版本） */
+/**
+ * 本 SDK 目前 snapshots/ 實際對應的宿主版本（尚未重生，仍為 0.391）。
+ * v1 以 A 與官方範例模組 E／F／G 的實際可運作為準；B 是衍生工具，不是規則來源。
+ */
 export const HOST_SURFACE_SNAPSHOT = "0.391";
+
+/** module:check 預設比對的宿主版本（allowlist 已先對齊 0.628；snapshots 待重生） */
+export const DEFAULT_HOST_VERSION = "0.628";
 
 /** 頁面前綴白名單（無此四前綴之一即無 proxy 角色閘門）【E13】 */
 export const PAGE_PREFIXES = ["/admin", "/student", "/parent", "/staff"];
@@ -25,11 +31,14 @@ export const BUILTIN_VALUES = [
   "announcements",
   "calendar",
   "classes",
+  "miscSettings",
   "modules",
+  "recreation",
   "roster",
   "schoolSettings",
   "settings",
   "stats",
+  "themeMarket",
   "users",
 ];
 
@@ -37,37 +46,53 @@ export const BUILTIN_VALUES = [
 export const PACKAGE_SIZE_LIMIT = 500 * 1024;
 
 /**
- * 允許 import 的宿主路徑（§3.3 允許面快照）。
- * 僅列前綴；`@/lib/announcements` 僅允 publishFromModule（其餘由掃描規則 3 概略把關）。
+ * 允許 import 的宿主路徑（v1 以 A 與 E／F／G 的實際 import 為準）。
+ * B 是衍生工具；若 E／F／G 使用新的宿主公開面，先更新本清單與 snapshots，不是改模組。
  */
 export const ALLOWED_HOST_IMPORTS = [
   "@/lib/dal",
-  "@/lib/audit",
+  "@/lib/firebase-admin",
   "@/lib/csrf",
   "@/lib/rate-limit",
-  "@/lib/firebase-admin",
+  "@/lib/audit",
   "@/lib/read-cache",
   "@/lib/list-cache",
-  "@/lib/api-error",
   "@/lib/announcements",
   "@/lib/calendar",
   "@/lib/module-gate",
+  "@/lib/module-db",
+  "@/lib/settings-client",
+  "@/lib/settings-server",
+  "@/lib/session",
   "@/lib/data-saver",
+  "@/lib/feature-modules",
+  "@/lib/roster",
   "@/types/feature-modules",
+  "@/types/settings",
   "@/types/users",
   "@/types/announcements",
+  "@/types/calendar",
+  "@/types/personal-info",
+  "@/types/roster",
   "@/components/AdminSectionShell",
   "@/components/ModuleIcon",
+  "@/components/AdSense",
+  "@/components/Copyright",
+  "@/components/DisclosureArrow",
   "@/components/RevealListCard",
+  "@/components/Toast",
+  "@/components/RoleLayout",
+  "@/components/RolePageShell",
 ];
 
-/** 明確禁止的宿主核心檔（§6.3-1：註冊表寫入面、設定層、圖示表等） */
+/** 明確禁止的宿主核心檔（v1 只保留真正不該由模組碰的寫入面） */
 export const FORBIDDEN_HOST_IMPORTS = [
   "@/types/modules",
-  "@/lib/settings-server",
+  "@/types/modules.generated",
   "@/lib/role-settings",
-  "@/lib/feature-modules", // server 端（寫入面）；唯讀需求走 @/types/feature-modules
   "@/lib/firebase", // 客戶端 Firebase 初始化歸宿主
+  "@/app/api/settings",
+  "@/app/admin/modules",
 ];
 
 /** 允許 import 的 npm 套件（主程式既有依賴白名單快照【E10】）；副檔名/子路徑另以 prefix 處理 */
