@@ -242,6 +242,39 @@ const cases = [
         "admin/demo-module/page.tsx": `export default function Page() {\n  return <main>demo</main>;\n}\n`,
       }),
   },
+  {
+    n: 21,
+    title: "相對 import 逃出模組資料夾",
+    expect: "fail",
+    keyword: "逃出",
+    run: () =>
+      buildCase(baseManifest(), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "../../../../lib/firebase-admin";\nexport const db = getAdminDb;\n`,
+      }),
+  },
+  {
+    n: 22,
+    title: "動態 import node: 內建模組",
+    expect: "fail",
+    keyword: "node:",
+    run: () =>
+      buildCase(baseManifest(), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `export async function run() {\n  const cp = await import("node:child_process");\n  return cp;\n}\n`,
+      }),
+  },
+  {
+    n: 23,
+    title: "doc 路徑存取未宣告集合",
+    expect: "fail",
+    keyword: "users",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: [] }), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function read() {\n  return getAdminDb().doc("users/u1").get();\n}\n`,
+      }),
+  },
 ];
 
 // —— 路由撞名快照檢查尚未併入 check.mjs：以 #15 為驅動補上 ——（見下方 assert）

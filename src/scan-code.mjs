@@ -16,18 +16,34 @@ import {
 } from "./constants.mjs";
 
 const CODE_EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
-const EXCLUDE_DIRS = new Set([".git", "node_modules", ".next", "dist", "build"]);
+const EXCLUDE_DIRS = new Set([".git", "node_modules", ".next"]);
 const IMPORT_RE = /(?:^|\n)\s*(?:import|export)[^"'`]*from\s+["']([^"']+)["']/g;
-const REQUIRE_RE = /require\(\s*["']([^"']+)["']\s*\)/g;
-const COLLECTION_RE = /\.collection\(\s*["']([^"']+)["']\s*\)/g;
+const REQUIRE_RE = /require\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
+const DYNAMIC_IMPORT_RE = /\bimport\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
+const DYNAMIC_IMPORT_DYNAMIC_RE = /\bimport\s*\(\s*[A-Za-z_$]/;
+const COLLECTION_RE = /\.collection\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
+const DOC_PATH_RE = /\.doc\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
 const CLIENT_STORAGE_RE = /\b(?:localStorage|sessionStorage)\b|\bdocument\s*\.\s*cookie\b|\beval\s*\(|new\s+Function\s*\(/;
+const SCRIPT_TEST_RE = /^(?:scripts|tests?)\//;
+
+function isScriptOrTest(rel) {
+  return SCRIPT_TEST_RE.test(rel);
+}
+
+/** 找出真正的 "use client"（允許前面有註解／空白） */
+function isUseClient(text) {
+  const stripped = text
+    .replace(/^\uFEFF/, "")
+    .replace(/^(?:\s|\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)*/, "");
+  return /^["']use client["']/.test(stripped);
+}
 
 /** 遞迴列出模組內程式碼檔（相對路徑，/ 分隔） */
 export function listCodeFiles(root) {
   const out = [];
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name.startsWith(".") || EXCLUDE_DIRS.has(entry.name)) continue;
+      if (EXCLUDE_DIRS.has(entry.name)) continue;
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(full);
       else if (CODE_EXT.has(path.extname(entry.name))) out.push(path.relative(root, full).split(path.sep).join("/"));
@@ -37,10 +53,24 @@ export function listCodeFiles(root) {
   return out.sort();
 }
 
-/** import 規則：relative ok；@/ 前綴白名單；npm 白名單【E10】 */
-function classifyImport(spec, file) {
-  if (spec.startsWith(".") || spec.startsWith("node:")) {
-    if (spec.startsWith("node:")) return null; // 程式建構可用
+/** import 規則：relative 必須留在模組內；@/ 前綴白名單；npm 白名單【E10】 */
+function classifyImport(spec, file, full, root) {
+  if (spec.startsWith(".")) {
+    const resolved = path.resolve(path.dirname(full), spec);
+    const target = path.relative(root, resolved);
+    if (target.startsWith("..") || path.isAbsolute(target)) {
+      return { rule: "R1", message: `${file}：相對路徑「${spec}」逃出模組資料夾【P0-3】` };
+    }
+    const normalized = target.split(path.sep).join("/");
+    if (!isScriptOrTest(file) && isScriptOrTest(normalized)) {
+      return { rule: "R1", message: `${file}：執行期檔案不可 import scripts/tests「${spec}」【P0-3】` };
+    }
+    return null;
+  }
+  if (spec.startsWith("node:")) {
+    if (!isScriptOrTest(file)) {
+      return { rule: "R1", message: `${file}：執行期檔案禁用 node: 內建模組「${spec}」【P0-3】` };
+    }
     return null;
   }
   if (spec.startsWith("@/")) {
@@ -134,27 +164,33 @@ export function scanCode(root, manifest) {
     const full = path.join(root, rel);
     const text = fs.readFileSync(full, "utf-8").replace(/^﻿/, "");
 
-    // R1/R5/R9：import
+    // R1/R5/R9：import（靜態＋require＋動態 import 字面值）
     const specs = new Set();
-    for (const re of [IMPORT_RE, REQUIRE_RE]) {
+    for (const re of [IMPORT_RE, REQUIRE_RE, DYNAMIC_IMPORT_RE]) {
       re.lastIndex = 0;
       let match;
       while ((match = re.exec(text))) specs.add(match[1]);
     }
     for (const spec of specs) {
-      const hit = classifyImport(spec, rel);
+      const hit = classifyImport(spec, rel, full, root);
       if (hit) errors.push(hit.message);
     }
+    if (!isScriptOrTest(rel) && DYNAMIC_IMPORT_DYNAMIC_RE.test(text)) {
+      errors.push(`${rel}：動態 import 非字面值，無法驗證【P0-3】`);
+    }
 
-    // R2：禁讀寫 settings/system（連 settings 集合一併擋）
+    // R2：settings 直接存取（v1 警告；v2 收斂）
     COLLECTION_RE.lastIndex = 0;
+    DOC_PATH_RE.lastIndex = 0;
     let col;
     const seenCollections = new Set();
     while ((col = COLLECTION_RE.exec(text))) seenCollections.add(col[1]);
+    while ((col = DOC_PATH_RE.exec(text))) {
+      const name = col[1].split("/")[0]?.trim();
+      if (name) seenCollections.add(name);
+    }
     for (const name of seenCollections) {
       if (name === "settings") {
-        // v1 相容：E／F／G 目前有直接讀 settings 的實作；E 是 canonical 範例。
-        // v2 再收斂為只准走宿主公開面，屆時才升為 error。
         warnings.push(
           `${rel}：直接存取 settings 集合（含 settings/system）——v1 相容放行，v2 請改走宿主公開面【§6.3-2】`
         );
@@ -179,7 +215,7 @@ export function scanCode(root, manifest) {
     scanRouteGuards(root, rel, text, errors);
 
     // R8：客戶端危險存取
-    if (/^["']use client["']/.test(text) && CLIENT_STORAGE_RE.test(text)) {
+    if (isUseClient(text) && CLIENT_STORAGE_RE.test(text)) {
       errors.push(
         `${rel}："use client" 檔禁存取 localStorage／sessionStorage／document.cookie／eval【§6.3-8】`
       );
