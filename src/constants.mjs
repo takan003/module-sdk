@@ -61,6 +61,7 @@ export const ALLOWED_HOST_IMPORTS = [
   "@/lib/calendar",
   "@/lib/module-gate",
   "@/lib/module-db",
+  "@/lib/module-host-data",
   "@/lib/settings-client",
   "@/lib/settings-server",
   "@/lib/session",
