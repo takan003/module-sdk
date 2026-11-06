@@ -22,6 +22,24 @@ const HOST_VERSION_RE = /^\d+\.\d+$/;
 
 const isString = (v) => typeof v === "string";
 const isNonEmptyString = (v) => isString(v) && v.trim() !== "";
+/** 路由路徑安全檢查：禁止 .／..、反斜線、編碼、查詢字串、空片段（防 path traversal）【E13】 */
+const DYNAMIC_SEGMENT_RE = /^\[\[?\.\.\.[A-Za-z0-9_]+\]\]?$|^\[[A-Za-z0-9_]+\]$/;
+function isSafeRoutePath(value) {
+  if (!isString(value) || !value.startsWith("/") || value.length > 300) return false;
+  if (/[\\?#%]/.test(value)) return false;
+  for (const char of value) {
+    if (char.charCodeAt(0) < 0x20) return false;
+  }
+  if (value.includes("//")) return false;
+  const segments = value.slice(1).split("/");
+  for (const segment of segments) {
+    if (segment === "" || segment === "." || segment === "..") return false;
+    if ((segment.includes("[") || segment.includes("]")) && !DYNAMIC_SEGMENT_RE.test(segment)) {
+      return false;
+    }
+  }
+  return true;
+}
 const toUpperSnake = (value) => value.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
 const toSnake = (value) => value.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
 
@@ -102,6 +120,12 @@ export function validateManifest(m, opts = {}) {
       }
       if (p.length > 1 && p.endsWith("/")) {
         at(`routes[${i}].path「${p}」不可有結尾斜線`);
+        return;
+      }
+      if (!isSafeRoutePath(p)) {
+        at(
+          `routes[${i}].path「${p}」含不安全路徑片段（禁止 .、..、反斜線、編碼、查詢字串與空片段）【E13】`
+        );
         return;
       }
       if (kind === "page") {

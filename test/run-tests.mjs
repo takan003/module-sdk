@@ -196,6 +196,22 @@ const cases = [
         "admin/demo-module/client-part.tsx": `"use client";\nexport function save() {\n  localStorage.setItem("k", "v");\n}\n`,
       }),
   },
+  {
+    n: 17,
+    title: "route path traversal（/admin/../../…）",
+    expect: "fail",
+    keyword: "不安全路徑",
+    run: () =>
+      buildCase(baseManifest({ routes: [{ kind: "page", path: "/admin/../../../../scripts/evil" }] })),
+  },
+  {
+    n: 18,
+    title: "route 反斜線 path traversal",
+    expect: "fail",
+    keyword: "不安全路徑",
+    run: () =>
+      buildCase(baseManifest({ routes: [{ kind: "page", path: "/admin/..\\..\\scripts\\evil" }] })),
+  },
 ];
 
 // —— 路由撞名快照檢查尚未併入 check.mjs：以 #15 為驅動補上 ——（見下方 assert）
