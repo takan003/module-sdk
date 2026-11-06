@@ -32,6 +32,7 @@ function baseManifest(overrides = {}) {
 }
 
 const DEFAULT_FILES = {
+  "admin/demo-module/layout.tsx": `import AdminSectionShell from "@/components/AdminSectionShell";\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  return <AdminSectionShell moduleKey="demoModule" title="demo" description="demo" deniedMessage="denied">{children}</AdminSectionShell>;\n}\n`,
   "admin/demo-module/page.tsx": `export default function Page() {\n  return <main>demo</main>;\n}\n`,
 };
 
@@ -211,6 +212,35 @@ const cases = [
     keyword: "不安全路徑",
     run: () =>
       buildCase(baseManifest({ routes: [{ kind: "page", path: "/admin/..\\..\\scripts\\evil" }] })),
+  },
+  {
+    n: 19,
+    title: "API route 缺少守門三件套",
+    expect: "fail",
+    keyword: "P0-8",
+    run: () =>
+      buildCase(
+        baseManifest({
+          routes: [
+            { kind: "page", path: "/admin/demo-module" },
+            { kind: "api", path: "/api/admin/demo-module" },
+          ],
+        }),
+        {
+          ...DEFAULT_FILES,
+          "api/admin/demo-module/route.ts": `export async function POST() {\n  return new Response("ok");\n}\n`,
+        }
+      ),
+  },
+  {
+    n: 20,
+    title: "管理頁缺少 AdminSectionShell layout",
+    expect: "fail",
+    keyword: "AdminSectionShell",
+    run: () =>
+      buildCase(baseManifest(), {
+        "admin/demo-module/page.tsx": `export default function Page() {\n  return <main>demo</main>;\n}\n`,
+      }),
   },
 ];
 

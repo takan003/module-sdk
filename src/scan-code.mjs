@@ -69,6 +69,50 @@ function classifyImport(spec, file) {
   return null;
 }
 
+/** 管理頁是否有任一祖先 layout 使用 AdminSectionShell（P0-8） */
+function hasAdminShellAncestor(root, rel) {
+  let dir = path.posix.dirname(rel);
+  while (dir === "admin" || dir.startsWith("admin/")) {
+    for (const name of ["layout.tsx", "layout.ts", "layout.jsx", "layout.js"]) {
+      const candidate = dir === "." ? name : `${dir}/${name}`;
+      const full = path.join(root, candidate);
+      if (fs.existsSync(full)) {
+        const text = fs.readFileSync(full, "utf-8");
+        if (text.includes("AdminSectionShell")) return true;
+      }
+    }
+    if (dir === "admin") break;
+    dir = path.posix.dirname(dir);
+  }
+  return false;
+}
+
+/** API route 守門三件套＋非管理端 module gate 的存在性檢查（P0-8） */
+function scanRouteGuards(root, rel, text, errors) {
+  if (/^api\/.*\/route\.(ts|js)$/.test(rel) || /^api\/route\.(ts|js)$/.test(rel)) {
+    const routePath = `/${rel.replace(/route\.(ts|js)$/, "").replace(/\/$/, "")}`;
+    if (!/enforceRateLimit\s*\(|checkRateLimit\s*\(/.test(text)) {
+      errors.push(`${rel}：缺少限流（enforceRateLimit／checkRateLimit）【P0-8】`);
+    }
+    if (!/requireRole\s*\(|requireAdminModule\s*\(|requireModulePermission\s*\(/.test(text)) {
+      errors.push(`${rel}：缺少鑑權（requireRole／requireAdminModule／requireModulePermission）【P0-8】`);
+    }
+    const mutating = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/.test(text);
+    if (mutating && !/assertSameOrigin\s*\(/.test(text)) {
+      errors.push(`${rel}：寫入方法缺少 CSRF（assertSameOrigin）【P0-8】`);
+    }
+    if (/^\/api\/(student|parent|staff)\//.test(routePath) && !/requireFeatureModuleEnabled\s*\(/.test(text)) {
+      errors.push(`${rel}：${routePath} 缺少模組啟用閘門（requireFeatureModuleEnabled）【P0-8】`);
+    }
+  }
+
+  if (rel.startsWith("admin/") && /page\.(tsx|ts|jsx|js)$/.test(rel)) {
+    if (!hasAdminShellAncestor(root, rel)) {
+      errors.push(`${rel}：管理頁缺少任一祖先 layout 的 AdminSectionShell 權限殼【P0-8】`);
+    }
+  }
+}
+
 /**
  * @param {string} root 模組根目錄
  * @param {{ value: string, dataCollections?: string[] }} manifest
@@ -128,6 +172,9 @@ export function scanCode(root, manifest) {
         );
       }
     }
+
+    // P0-8：API 守門三件套與管理頁權限殼
+    scanRouteGuards(root, rel, text, errors);
 
     // R8：客戶端危險存取
     if (/^["']use client["']/.test(text) && CLIENT_STORAGE_RE.test(text)) {
