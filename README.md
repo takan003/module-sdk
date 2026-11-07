@@ -96,4 +96,3 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
 ## 授權
 
 [MIT](LICENSE)
-
