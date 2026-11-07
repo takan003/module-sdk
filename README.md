@@ -36,7 +36,7 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
 ## 穩定性承諾【E4】
 
 同一 `contractVersion`（目前 `1`）內，§3.3 允許面**只增不改不刪**；破壞性變更才遞增版本。
-`snapshots/` 目前仍對應宿主 `0.391`（待重生）；`module:check` 預設比對宿主 `0.645`（`DEFAULT_HOST_VERSION`）。
+`snapshots/` 目前仍對應宿主 `0.391`（待重生）；`module:check` 預設比對宿主 `0.646`（`DEFAULT_HOST_VERSION`）。
 第一階段已先把 allowlist 與官方 E／F／G 對齊；影子 tsc／snapshots 是下一階段。
 
 ## 邊界（讀懂這段才不會誤用）
