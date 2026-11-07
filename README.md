@@ -1,5 +1,7 @@
 # module-sdk（期 1）
 
+[![CI](https://github.com/takan003/module-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/takan003/module-sdk/actions/workflows/ci.yml)
+
 數位校園工具箱選用（外掛）功能模組 SDK：讓外部開發者在**沒有主程式**的環境也能寫模組、跑基本驗證。
 規格：`campus-toolkit/docs/模組市集與外掛開發.md` §3.2、§6.3、附錄 A。
 
@@ -20,7 +22,7 @@
 
 ```bash
 # 靜態檢查（零依賴，Node ≥20）
-node bin/module-check.mjs <模組資料夾> [--host-version 0.388] [--json]
+node bin/module-check.mjs <模組資料夾> [--host-version 0.647] [--json]
 # 退出碼 0＝通過（warning 不擋）；1＝有 error
 
 # 影子 tsc（快照模式；需環境有 tsc，或借主程式的）
@@ -31,6 +33,21 @@ node bin/module-shadow-tsc.mjs <模組資料夾> --host ../campus-toolkit
 
 # 維護者：從主程式重新產生 snapshots 並更新 HOST_SURFACE_SNAPSHOT
 node bin/module-snapshot-gen.mjs --host ../campus-toolkit
+```
+
+也可以把 SDK 以 Git 依賴加到模組專案（釘標籤，避免上游變動影響）：
+
+```json
+{
+  "devDependencies": {
+    "module-sdk": "github:takan003/module-sdk#v1.0.0"
+  }
+}
+```
+
+```bash
+npx module-check .
+npx module-shadow-tsc . --host ../campus-toolkit
 ```
 
 ## 契約權威順序（v1）
@@ -65,3 +82,18 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
    （自動重生 `snapshots/lib`、`types`、`components` 並更新 `HOST_SURFACE_SNAPSHOT`）
 1. `npm test`（附錄 A 全綠＋ golden modules 的 check 與影子 tsc）
 1. commit 訊息註明宿主版本對應；tag `v1.x` 供市集以 `github:<owner>/module-sdk#v1.x` 釘版
+
+## 維護者：CI 與分支保護
+
+請在 GitHub repo 的 **Settings → Branches** 把 `CI / test` 設為 required status check，
+避免未通過測試的變更直接進 `main`。
+
+## 安全性
+
+請不要開公開 issue；回報方式與範圍見 [`SECURITY.md`](SECURITY.md)。
+`module:check` 是啟發式掃描，**不是沙箱**——它降低風險，但不能保證模組安全。
+
+## 授權
+
+[MIT](LICENSE)
+
