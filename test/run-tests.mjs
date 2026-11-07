@@ -9,8 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { checkModule } from "../src/check.mjs";
-
-const HOST_VERSION = "0.388";
+import { DEFAULT_HOST_VERSION as HOST_VERSION } from "../src/constants.mjs";
 
 /** 合法基底 manifest（案例 1 用） */
 function baseManifest(overrides = {}) {

@@ -1,12 +1,15 @@
-/** 型別快照：宿主 @/lib/data-saver（省流開關 hook；契約增補 0.392） */
-
+import { Settings } from "@/types/settings";
 export interface DataSaverState {
-  /** 已併入預設值的系統設定（寬鬆型別） */
-  settings: Record<string, unknown>;
-  /** 設定是否已判定（讀取失敗亦視為已判定） */
-  ready: boolean;
-  /** 省流開關是否啟用 */
-  saverOn: boolean;
+    /** 已併入預設值的系統設定（含省流開關與頁首／頁尾需要的欄位） */
+    settings: Settings;
+    /** 設定是否已判定（讀取失敗亦視為已判定，fail-open＝不影響既有行為） */
+    ready: boolean;
+    /** 省流開關是否啟用 */
+    saverOn: boolean;
 }
-
-export function useDataSaver(): DataSaverState;
+/**
+ * 讀取系統設定並判斷「省流開關」。
+ * 列表頁在 ready 之前不得載入列表，否則省流模式下會白打一發請求。
+ * 走 fetchSettings（30 秒快取＋同請求去重），順帶採用回應的 cacheEpoch。
+ */
+export declare function useDataSaver(): DataSaverState;

@@ -1,66 +1,11 @@
-/** 型別快照：宿主 @/lib/firebase-admin（Firestore 以寬鬆型別表示；僅伺服器端可用） */
-
-export interface FirestoreDoc {
-  id: string;
-  exists: boolean;
-  data(): Record<string, unknown> | undefined;
-  get(): Promise<FirestoreDoc>;
-  set(data: Record<string, unknown>, options?: { merge?: boolean }): Promise<unknown>;
-  update(data: Record<string, unknown>): Promise<unknown>;
-  delete(): Promise<unknown>;
-  ref: FirestoreRef;
-}
-
-export interface FirestoreRef {
-  id: string;
-  path: string;
-  collection(name: string): FirestoreCollection;
-  get(): Promise<FirestoreDoc>;
-  set(data: Record<string, unknown>, options?: { merge?: boolean }): Promise<unknown>;
-  update(data: Record<string, unknown>): Promise<unknown>;
-  delete(): Promise<unknown>;
-}
-
-export interface FirestoreQuery {
-  where(field: string, op: string, value: unknown): FirestoreQuery;
-  orderBy(field: string, direction?: "asc" | "desc"): FirestoreQuery;
-  limit(n: number): FirestoreQuery;
-  offset(n: number): FirestoreQuery;
-  get(): Promise<{ docs: FirestoreDoc[]; size: number; empty: boolean }>;
-}
-
-export interface FirestoreCollection {
-  doc(id?: string): FirestoreRef;
-  add(data: Record<string, unknown>): Promise<FirestoreRef>;
-  where(field: string, op: string, value: unknown): FirestoreQuery;
-  orderBy(field: string, direction?: "asc" | "desc"): FirestoreQuery;
-  limit(n: number): FirestoreQuery;
-  get(): Promise<{ docs: FirestoreDoc[]; size: number; empty: boolean }>;
-}
-
-export interface Firestore {
-  collection(name: string): FirestoreCollection;
-  batch(): {
-    set(ref: FirestoreRef, data: Record<string, unknown>, options?: { merge?: boolean }): void;
-    update(ref: FirestoreRef, data: Record<string, unknown>): void;
-    delete(ref: FirestoreRef): void;
-    commit(): Promise<unknown>;
-  };
-  runTransaction<T>(fn: (tx: FirestoreTransaction) => Promise<T>): Promise<T>;
-}
-
-export interface FirestoreTransaction {
-  get(ref: FirestoreRef): Promise<FirestoreDoc>;
-  get(query: FirestoreQuery): Promise<{ docs: FirestoreDoc[] }>;
-  set(ref: FirestoreRef, data: Record<string, unknown>, options?: { merge?: boolean }): FirestoreTransaction;
-  update(ref: FirestoreRef, data: Record<string, unknown>): FirestoreTransaction;
-  delete(ref: FirestoreRef): FirestoreTransaction;
-}
-
-export function getAdminDb(): Firestore;
-export const FieldValue: {
-  serverTimestamp(): unknown;
-  increment(n: number): unknown;
-  arrayUnion(...values: unknown[]): unknown;
-  arrayRemove(...values: unknown[]): unknown;
-};
+import "server-only";
+import { ServiceAccount } from "firebase-admin/app";
+import { Firestore } from "firebase-admin/firestore";
+import { Auth } from "firebase-admin/auth";
+/** 解析 `FIREBASE_SERVICE_ACCOUNT_KEY`（純 JSON／引號包覆 JSON／base64 皆可）；「統計儀表板」取用以呼叫 Cloud Monitoring */
+export declare function parseServiceAccount(raw: string): ServiceAccount;
+export declare function getAdminDb(): Firestore;
+export declare function getAdminAuth(): Auth;
+/** Firebase Storage 私有 bucket：每個主程式 fork 使用自己的 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET。 */
+export declare function getAdminStorageBucket(): import("@google-cloud/storage").Bucket;
+export { FieldValue } from "firebase-admin/firestore";

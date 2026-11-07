@@ -1,5 +1,7 @@
-/** 型別快照：宿主 @/lib/csrf */
-import type { NextRequest, NextResponse } from "next/server";
-
-/** mutating API 同源檢查；失敗回 NextResponse（403），通過回 null */
-export function assertSameOrigin(request: NextRequest): NextResponse | null;
+import "server-only";
+import { NextRequest, NextResponse } from "next/server";
+/**
+ * 同源檢查：mutating API 必須 Origin/Referer 主機 = 請求 host。
+ * 搭配 SameSite=Lax cookie，補足 CSRF 防護。
+ */
+export declare function assertSameOrigin(request: NextRequest): NextResponse | null;

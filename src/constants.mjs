@@ -7,12 +7,12 @@
 export const MODULE_CONTRACT_VERSION = 1;
 
 /**
- * 本 SDK 目前 snapshots/ 實際對應的宿主版本（尚未重生，仍為 0.391）。
- * v1 以 A 與官方範例模組 E／F／G 的實際可運作為準；B 是衍生工具，不是規則來源。
+ * 本 SDK 目前 snapshots/ 實際對應的宿主版本。
+ * 由 `bin/module-snapshot-gen.mjs --host <campus-toolkit>` 自動更新。
  */
-export const HOST_SURFACE_SNAPSHOT = "0.391";
+export const HOST_SURFACE_SNAPSHOT = "0.647";
 
-/** module:check 預設比對的宿主版本（allowlist 已先對齊 0.636；snapshots 待重生） */
+/** module:check 預設比對的宿主版本（allowlist 與 snapshots 已對齊 0.647） */
 export const DEFAULT_HOST_VERSION = "0.647";
 
 /** 頁面前綴白名單（無此四前綴之一即無 proxy 角色閘門）【E13】 */
