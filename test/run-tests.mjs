@@ -299,6 +299,50 @@ const cases = [
         "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function read() {\n  return getAdminDb().doc("settings/system").get();\n}\n`,
       }),
   },
+  {
+    n: 27,
+    title: "寫入已宣告的核心集合 rosterStudents",
+    expect: "fail",
+    keyword: "核心個資集合",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: ["rosterStudents"] }), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function write() {\n  await getAdminDb().collection("rosterStudents").doc("u1").set({ name: "x" });\n}\n`,
+      }),
+  },
+  {
+    n: 28,
+    title: "以 doc 路徑寫入核心集合 studentPersonalInfo",
+    expect: "fail",
+    keyword: "核心個資集合",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: ["studentPersonalInfo"] }), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function write() {\n  await getAdminDb().doc("studentPersonalInfo/u1").set({ name: "x" });\n}\n`,
+      }),
+  },
+  {
+    n: 29,
+    title: "讀取已宣告的核心集合（v2 遷移警告）",
+    expect: "warn",
+    keyword: "scopedDb",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: ["rosterStudents"] }), {
+        ...DEFAULT_FILES,
+        "lib/read.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function read() {\n  return getAdminDb().collection("rosterStudents").doc("u1").get();\n}\n`,
+      }),
+  },
+  {
+    n: 30,
+    title: "直寫設施集合 announcements",
+    expect: "fail",
+    keyword: "掛勾集合",
+    run: () =>
+      buildCase(baseManifest({ dataCollections: [] }), {
+        ...DEFAULT_FILES,
+        "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function write() {\n  await getAdminDb().collection("announcements").add({ title: "x" });\n}\n`,
+      }),
+  },
 ];
 
 // —— 路由撞名快照檢查尚未併入 check.mjs：以 #15 為驅動補上 ——（見下方 assert）

@@ -74,6 +74,9 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
   快照模式仍使用寬鬆樁型別（react/next 為 any 層），目的是提前抓「用錯公開面」
   （例如 import 錯名、props 缺漏），不是完整型別驗證；宿主端 `npm run lint` 仍是最終判定。
 - #4（status=live 上架條件）與 #13（sha256 完整性）屬市集/安裝端案例，本地 check 不實作（見附錄 A 測試輸出）。
+- **核心個資集合唯讀**（名冊四表＋學生個人資料三表）：掃描器會擋直接鏈式寫入；
+  `scopedDb` 另在 runtime 擋 `set`／`update`／`delete`／`add`／batch／transaction。
+  設施集合（`announcements`／`calendarEvents`）不可直接存取，一律使用掛勾函式。
 
 ## 更新流程
 

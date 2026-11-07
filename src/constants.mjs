@@ -27,6 +27,17 @@ export const HOOK_COLLECTIONS = ["announcements", "calendarEvents"];
 /** 宿主保留集合：模組不得宣告或直接存取（P0-2） */
 export const RESERVED_COLLECTIONS = ["users", "settings", "activityLog", "revokedJTIs"];
 
+/** 核心個資集合：可讀不可寫（P0-2 v2） */
+export const CORE_READ_ONLY_COLLECTIONS = [
+  "rosterStudents",
+  "rosterParents",
+  "rosterStaff",
+  "rosterAdmins",
+  "studentPersonalInfo",
+  "studentPersonalIdentity",
+  "studentPersonalPhoto",
+];
+
 /** 內建／管理端模組代碼快照（value 撞名即拒絕） */
 export const BUILTIN_VALUES = [
   "account",

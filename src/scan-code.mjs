@@ -11,6 +11,7 @@ import {
   ALLOWED_HOST_IMPORTS,
   ALLOWED_NPM_PACKAGES,
   ALLOWED_NPM_PREFIXES,
+  CORE_READ_ONLY_COLLECTIONS,
   FORBIDDEN_HOST_IMPORTS,
   HOOK_COLLECTIONS,
   RESERVED_COLLECTIONS,
@@ -26,6 +27,24 @@ const COLLECTION_RE = /\.collection\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
 const DOC_PATH_RE = /\.doc\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
 const CLIENT_STORAGE_RE = /\b(?:localStorage|sessionStorage)\b|\bdocument\s*\.\s*cookie\b|\beval\s*\(|new\s+Function\s*\(/;
 const SCRIPT_TEST_RE = /^(?:scripts|tests?)\//;
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** 核心集合的直接寫入樣式（鏈式呼叫；變數型別仍靠 runtime scopedDb 擋） */
+function hasCoreWrite(source, name) {
+  const quoted = `["'\x60]${escapeRegExp(name)}["'\x60]`;
+  const patterns = [
+    new RegExp(
+      `\\.collection\\(\\s*${quoted}\\s*\\)\\s*(?:\\.doc\\([^)]*\\)\\s*)?\\.(?:add|set|update|delete|create)\\s*\\(`
+    ),
+    new RegExp(
+      `\\.doc\\(\\s*["'\x60]${escapeRegExp(name)}\\/[^"'\x60]*["'\x60]\\s*\\)\\s*\\.(?:set|update|delete|create)\\s*\\(`
+    ),
+  ];
+  return patterns.some((re) => re.test(source));
+}
 
 function isScriptOrTest(rel) {
   return SCRIPT_TEST_RE.test(rel);
@@ -187,6 +206,7 @@ export function scanCode(root, manifest) {
     const seenCollections = new Set();
     while ((col = COLLECTION_RE.exec(text))) seenCollections.add(col[1]);
     while ((col = DOC_PATH_RE.exec(text))) {
+      if (!col[1].includes("/")) continue; // .doc("id") 是文件 ID，不是集合路徑
       const name = col[1].split("/")[0]?.trim();
       if (name) seenCollections.add(name);
     }
@@ -207,6 +227,19 @@ export function scanCode(root, manifest) {
         errors.push(
           `${rel}：使用未宣告集合「${name}」——manifest.dataCollections 未列（宣告即承諾）【§3.3-7】`
         );
+        continue;
+      }
+      // P0-2 v2：核心個資集合可讀不可寫
+      if (CORE_READ_ONLY_COLLECTIONS.includes(name)) {
+        if (hasCoreWrite(text, name)) {
+          errors.push(
+            `${rel}：對核心集合「${name}」進行寫入——核心個資集合僅供讀取【P0-2】`
+          );
+        } else if (/\bgetAdminDb\b/.test(text)) {
+          warnings.push(
+            `${rel}：以 getAdminDb 讀取核心集合「${name}」；v2 建議改用 scopedDb(...) 以套用唯讀保護【P0-2】`
+          );
+        }
       }
     }
 
