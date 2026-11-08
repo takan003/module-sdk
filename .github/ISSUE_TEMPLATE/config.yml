@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全性漏洞
+    url: https://github.com/takan003/module-sdk/security/advisories/new
+    about: 請勿公開張貼漏洞細節
+  - name: 主程式
+    url: https://github.com/takan003/campus-toolkit
+    about: 主程式與安裝端問題
+  - name: 模組市集
+    url: https://github.com/takan003/campus-toolkit-marketplace
+    about: 上架、簽章與投稿流程

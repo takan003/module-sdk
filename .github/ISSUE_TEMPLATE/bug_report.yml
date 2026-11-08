@@ -1,0 +1,34 @@
+name: 問題回報
+description: 回報 module:check、影子 tsc 或 manifest 驗證問題
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 發生什麼事
+      description: 請描述實際行為與預期行為
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 重現方式
+      description: 指令、manifest 片段或最小模組範例（請移除敏感資料）
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: sdk-version
+    attributes:
+      label: SDK 版本
+      placeholder: "1.1.1"
+    validations:
+      required: true
+  - type: input
+    id: host-version
+    attributes:
+      label: 宿主版本（若適用）
+      placeholder: "0.653"
+    validations:
+      required: false
