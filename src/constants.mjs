@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 契約常數與白名單快照（規格：docs/模組市集與外掛開發.md §3.2、§6.3）。
  * 快照型：宿主改公開面時同步更新並遞增 HOST_SURFACE_SNAPSHOT。
  */
@@ -13,7 +13,7 @@ export const MODULE_CONTRACT_VERSION = 1;
 export const HOST_SURFACE_SNAPSHOT = "0.656";
 
 /** module:check 預設比對的宿主版本（allowlist 與 snapshots 已對齊；此值跟隨主程式目前版本） */
-export const DEFAULT_HOST_VERSION = "0.656";
+export const DEFAULT_HOST_VERSION = "0.660";
 
 /** 頁面前綴白名單（無此四前綴之一即無 proxy 角色閘門）【E13】 */
 export const PAGE_PREFIXES = ["/admin", "/student", "/parent", "/staff"];
