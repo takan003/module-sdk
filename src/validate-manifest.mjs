@@ -4,6 +4,9 @@
  * 規格：docs/主程式模組與功能模組.md §3.2、docs/模組市集與外掛開發.md §3.3、§6.3-4。
  */
 
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   BUILTIN_VALUES,
   HOST_ROUTES,
@@ -12,6 +15,12 @@ import {
   PAGE_PREFIXES,
   RESERVED_COLLECTIONS,
 } from "./constants.mjs";
+import { validateAgainstSchema } from "./schema-validate.mjs";
+
+const SDK_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const MANIFEST_SCHEMA = JSON.parse(
+  fs.readFileSync(path.join(SDK_ROOT, "module.schema.json"), "utf-8")
+);
 
 const CATEGORIES = ["帳號與權限", "校務資料", "系統與紀錄"];
 const STATUSES = ["planned", "building", "live"];
@@ -69,6 +78,13 @@ export function validateManifest(m, opts = {}) {
 
   if (!m || typeof m !== "object" || Array.isArray(m)) {
     at("需為 JSON 物件");
+    return { errors, warnings };
+  }
+
+  // 結構驗證：以 module.schema.json 為來源；跨欄位語意規則由下方手寫檢查補上。
+  const schemaErrors = validateAgainstSchema(m, MANIFEST_SCHEMA);
+  if (schemaErrors.length > 0) {
+    for (const message of schemaErrors) at(message);
     return { errors, warnings };
   }
 

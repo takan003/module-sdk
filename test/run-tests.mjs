@@ -343,6 +343,43 @@ const cases = [
         "lib/bad.ts": `import { getAdminDb } from "@/lib/firebase-admin";\nexport async function write() {\n  await getAdminDb().collection("announcements").add({ title: "x" });\n}\n`,
       }),
   },
+  {
+    n: 31,
+    title: "schema：缺少必填 label",
+    expect: "fail",
+    keyword: "label",
+    run: () => {
+      const manifest = baseManifest();
+      delete manifest.label;
+      return buildCase(manifest);
+    },
+  },
+  {
+    n: 32,
+    title: "schema：author.version 型別錯誤",
+    expect: "fail",
+    keyword: "author.version",
+    run: () =>
+      buildCase(
+        baseManifest({
+          author: { author: "Tester", authorUrl: "", version: 123, releasedAt: "2026-10-10" },
+        })
+      ),
+  },
+  {
+    n: 33,
+    title: "schema：routes 空陣列",
+    expect: "fail",
+    keyword: "routes",
+    run: () => buildCase(baseManifest({ routes: [] })),
+  },
+  {
+    n: 34,
+    title: "schema：permission.mode 非法值",
+    expect: "fail",
+    keyword: "permission.mode",
+    run: () => buildCase(baseManifest({ permission: { mode: "unknown" } })),
+  },
 ];
 
 // —— 路由撞名快照檢查尚未併入 check.mjs：以 #15 為驅動補上 ——（見下方 assert）

@@ -10,7 +10,7 @@
 | 內容 | 位置 |
 |---|---|
 | 契約常數（`MODULE_CONTRACT_VERSION`、白名單、內建代碼/路由快照） | `src/constants.mjs` |
-| manifest 驗證（宿主掃描器鏡射＋E1 規則） | `src/validate-manifest.mjs` |
+| manifest 驗證（schema 結構驗證＋宿主語意規則） | `src/validate-manifest.mjs`、`src/schema-validate.mjs`、`module.schema.json` |
 | `module:check` 靜態掃描（§6.3 十條規則的可自動化子集） | `src/check.mjs`、`src/scan-code.mjs`、`bin/module-check.mjs` |
 | 型別快照 `.d.ts`（§3.3 允許面；由主程式自動產生） | `snapshots/` |
 | 快照產生器（從主程式 tsc 宣告檔重生） | `bin/module-snapshot-gen.mjs` |
@@ -69,6 +69,8 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
 
 - `module:check` 是**啟發式靜態掃描**（字串＋import 比對）：能抓常見違規，抓不完——
   宿主安裝端⑨與 `npm run lint`（真 tsc＋eslint）才是最終判定。
+- `module.schema.json` 是 SDK 的**結構驗證來源**：`validate-manifest.mjs` 會先跑 schema，再跑跨欄位語意規則
+  （路由前綴、保留集合、掛勾前綴、撞名等）。A 宿主掃描器仍是最終判定，C 的 publish 也會呼叫 A 的 `module-check`。
 - 影子 tsc 有兩種模式：**快照模式**（預設，給沒有主程式原始碼的外部開發者）與
   **宿主模式**（`--host`，直接借主程式的 tsconfig／真實依賴，最準確）。
   快照模式仍使用寬鬆樁型別（react/next 為 any 層），目的是提前抓「用錯公開面」

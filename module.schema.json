@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/takan003/module-sdk/module.schema.json",
   "title": "campus-toolkit 功能模組 manifest（module.json）",
-  "description": "規格來源：docs/主程式模組與功能模組.md §3.2、docs/模組市集與外掛開發.md §3.3。市集與安裝端以本 schema ＋ module:check 雙邊驗證。",
+  "description": "規格來源：docs/主程式模組與功能模組.md §3.2、docs/模組市集與外掛開發.md §3.3。SDK 的 validate-manifest 會載入本 schema 做結構驗證；A 宿主掃描器仍是最終判定，並補跨欄位語意規則（前綴、保留集合、掛勾、路由前綴）。",
   "type": "object",
   "required": ["value", "label", "kind", "status", "description", "href", "author", "provides", "routes", "permission"],
   "additionalProperties": true,
@@ -117,8 +117,8 @@
     },
     "hooks": {
       "type": "array",
-      "items": { "enum": ["announcements", "calendar"] },
-      "description": "已實作掛勾；未宣告過的值＝警示可安裝【E9】"
+      "items": { "type": "string" },
+      "description": "已實作掛勾；未宣告過的值＝警示可安裝【E9】（已知值：announcements、calendar）"
     },
     "contractVersion": { "type": "integer", "minimum": 1, "description": "開發時所依契約版本；＞主程式即拒絕安裝" },
     "minHostVersion": { "type": "string", "pattern": "^\\d+\\.\\d+$", "description": "最低主程式版本" },
