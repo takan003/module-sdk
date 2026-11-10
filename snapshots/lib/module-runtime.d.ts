@@ -17,7 +17,7 @@ export type { ModuleRuntimeContext };
  * 5. 路徑角色（`/api/admin/*`→admin、`/api/student/*`→student…）
  * 6. 非管理端（student／parent／staff）的「功能模組已啟用」閘門
  *
- * 模組自己的 `requireRole`／`assertSameOrigin`／`enforceRateLimit` 仍會執行，
+ * 模組自己的 `requireRole`／`assertSameOrigin`／`enforceRateLimitShared` 仍會執行，
  * 這裡是第二道防線；同時提供 `AsyncLocalStorage` 的模組上下文供後續功能使用。
  */
 type RouteHandler = (request: NextRequest, context?: unknown) => Promise<Response> | Response;

@@ -8,13 +8,25 @@ export interface RateLimitResult {
 export declare function checkRateLimit(key: string, limit: number, windowMs: number): RateLimitResult;
 export declare function clientKey(request: NextRequest, suffix?: string): string;
 export declare function tooManyRequests(retryAfterSec: number): NextResponse;
-export declare function enforceRateLimit(request: NextRequest, bucketName: string, limit: number, windowMs: number, suffix?: string): NextResponse | null;
 /**
- * 帳號維度限流：以 role:account 為 key，不依賴 IP，
- * 即使 IP 無法取得或可偽造，仍能擋住針對單一帳號的爆破。
- * 注意：仍為進程內計數；跨實例的持久化防護見 login 路由的 Firestore failedAttempts／全域鎖定。
+ * 檢查限流：先跑進程內，再視設定跑 Upstash。
+ * 任一來源判定超限即拒絕；Upstash 失敗時只採用進程內結果。
+ */
+export declare function checkRateLimitAsync(key: string, limit: number, windowMs: number): Promise<RateLimitResult>;
+/**
+ * 進程內限流（同步）。保留給既有呼叫端與外部模組使用。
+ * 宿主路由應改用 `enforceRateLimitShared` 以取得跨實例保護。
+ */
+export declare function enforceRateLimit(request: NextRequest, bucketName: string, limit: number, windowMs: number, suffix?: string): NextResponse | null;
+/** 跨實例版：先跑進程內，再視設定跑 Upstash。 */
+export declare function enforceRateLimitShared(request: NextRequest, bucketName: string, limit: number, windowMs: number, suffix?: string): Promise<NextResponse | null>;
+/**
+ * 帳號維度限流（同步，進程內）。
+ * 保留給既有呼叫端與外部模組使用；宿主路由改用 `enforceAccountRateLimitShared`。
  */
 export declare function enforceAccountRateLimit(bucketName: string, role: string, account: string, limit: number, windowMs: number): NextResponse | null;
+/** 帳號維度限流（跨實例版）。 */
+export declare function enforceAccountRateLimitShared(bucketName: string, role: string, account: string, limit: number, windowMs: number): Promise<NextResponse | null>;
 /** 限流桶表：內建手刻列＋選用模組 manifest（rateLimits）自動併入【期 0 批次 2】 */
 export declare const RATE: {
     EXAM_REGISTRATION_LIST: {
