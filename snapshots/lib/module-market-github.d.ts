@@ -16,6 +16,8 @@ export interface CommitMarketplaceInstallInput {
     manifestVersion: string;
     contractVersion: number;
     minHostVersion: string;
+    signature?: string;
+    publicKey?: string;
 }
 export interface CommitMarketplaceUninstallInput {
     moduleId: string;
