@@ -10,7 +10,7 @@ export const MODULE_CONTRACT_VERSION = 1;
  * 本 SDK 目前 snapshots/ 實際對應的宿主版本。
  * 由 `bin/module-snapshot-gen.mjs --host <campus-toolkit>` 自動更新。
  */
-export const HOST_SURFACE_SNAPSHOT = "0.664";
+export const HOST_SURFACE_SNAPSHOT = "0.665";
 
 /** module:check 預設比對的宿主版本（allowlist 與 snapshots 已對齊；此值跟隨主程式目前版本） */
 export const DEFAULT_HOST_VERSION = "0.664";
