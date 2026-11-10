@@ -23,11 +23,11 @@ export declare function maskEmail(email: unknown): string;
 export declare function generateOtp(): string;
 export interface TwoFactorProfile {
     method: TwoFactorMethod;
-    /** TOTP Base32 密鑰（method !== "totp" 時可能為空） */
+    /** TOTP Base32 密鑰（已解密；method !== "totp" 時可能為空） */
     totpSecret: string;
 }
 export declare function readTwoFactorProfile(data: DocumentData | undefined): TwoFactorProfile;
-/** 讀取並產生 TOTP 密鑰（首次啟用驗證碼APP時呼叫，寫回文件） */
+/** 讀取並產生 TOTP 密鑰（首次啟用驗證碼APP時呼叫，加密後寫回文件） */
 export declare function ensureTotpSecret(ref: DocumentReference, data: DocumentData): Promise<string>;
 /** 重新產生 TOTP 密鑰（使用者手動觸發，舊密鑰立即失效） */
 export declare function rotateTotpSecret(ref: DocumentReference): Promise<string>;
