@@ -22,7 +22,7 @@
 
 ```bash
 # 靜態檢查（零依賴，Node ≥20）
-node bin/module-check.mjs <模組資料夾> [--host-version 0.689] [--json]
+node bin/module-check.mjs <模組資料夾> [--host-version 0.690] [--json]
 # 退出碼 0＝通過（warning 不擋）；1＝有 error
 
 # 影子 tsc（快照模式；需環境有 tsc，或借主程式的）
@@ -60,8 +60,8 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
 ## 穩定性承諾【E4】
 
 同一 `contractVersion`（目前 `1`）內，§3.3 允許面**只增不改不刪**；破壞性變更才遞增版本。
-`snapshots/` 已對應宿主 `0.689`（`HOST_SURFACE_SNAPSHOT`），由快照產生器從主程式宣告檔產生；
-`module:check` 預設也比對宿主 `0.689`（`DEFAULT_HOST_VERSION`，跟隨主程式目前版本）。
+`snapshots/` 已對應宿主 `0.690`（`HOST_SURFACE_SNAPSHOT`），由快照產生器從主程式宣告檔產生；
+`module:check` 預設也比對宿主 `0.690`（`DEFAULT_HOST_VERSION`，跟隨主程式目前版本）。
 `npm test` 的 golden modules 會同時跑 `module:check` 與影子 tsc（快照模式）；
 設定 `SHADOW_TSC_HOST=1` 可改用主程式真實型別的宿主模式。
 
