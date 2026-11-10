@@ -8,8 +8,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "張家誠";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.1.55";
-        readonly releasedAt: "2026-10-29";
+        readonly version: "0.1.57";
+        readonly releasedAt: "2026-11-10";
     };
     readonly provides: {
         readonly student: true;
@@ -40,6 +40,14 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/exam-registration";
     };
     readonly changelog: [{
+        readonly version: "0.1.57";
+        readonly releasedAt: "2026-11-10";
+        readonly notes: ["匯出 CSV 時對 =、+、-、@ 開頭的儲存格加單引號，避免 Excel／Sheets 公式注入。"];
+    }, {
+        readonly version: "0.1.56";
+        readonly releasedAt: "2026-11-09";
+        readonly notes: ["資料存取改用主程式 scopedDb；名冊核心集合改為唯讀，並補上 rosterStudents 宣告。", "既有 API、資料結構與使用者操作不變。"];
+    }, {
         readonly version: "0.1.55";
         readonly releasedAt: "2026-10-29";
         readonly notes: ["模組介紹改為分類條列（學生端、教職員、管理端、家長端）並精簡文字，市集卡片一眼可讀完整功能範圍", "市集更新說明改為條列呈現，與自主學習計畫模組一致"];
@@ -174,8 +182,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "takan003";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.1.31";
-        readonly releasedAt: "2026-11-02";
+        readonly version: "0.1.32";
+        readonly releasedAt: "2026-11-09";
     };
     readonly provides: {
         readonly student: true;
@@ -203,6 +211,10 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/identity-tax-inquiry";
     };
     readonly changelog: [{
+        readonly version: "0.1.32";
+        readonly releasedAt: "2026-11-09";
+        readonly notes: ["資料存取改用主程式 scopedDb；名冊核心集合維持唯讀。", "既有 API、資料結構與使用者操作不變。"];
+    }, {
         readonly version: "0.1.31";
         readonly releasedAt: "2026-11-02";
         readonly notes: ["財稅查調不再收集對象姓名，家長檢視及 CSV 同步調整，保留學生名冊姓名。", "每次送出確認均須重新同意個人資料授權，記錄版本與同意時間；草稿不需同意。", "修正實施說明編輯器提示語：聚焦即隱藏，避免中文組字時重疊；空白失焦後恢復，提示文字不攔截點擊。"];
@@ -341,8 +353,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "takan003";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.0.148";
-        readonly releasedAt: "2026-11-06";
+        readonly version: "0.0.149";
+        readonly releasedAt: "2026-11-09";
     };
     readonly provides: {
         readonly student: true;
@@ -367,6 +379,10 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/self-directed-learning";
     };
     readonly changelog: [{
+        readonly version: "0.0.149";
+        readonly releasedAt: "2026-11-09";
+        readonly notes: ["資料存取改用主程式 scopedDb；名冊核心集合改為唯讀，並補上 rosterStudents 宣告。", "既有 API、資料結構與使用者操作不變。"];
+    }, {
         readonly version: "0.0.148";
         readonly releasedAt: "2026-11-06";
         readonly notes: ["學校設定改走主程式唯讀公開面（module-host-data／readSystemDoc），不再直接存取 settings 集合。", "文件匯出測試補上新的宿主公開面 mock。"];

@@ -1,5 +1,9 @@
 import "server-only";
 import { NextRequest } from "next/server";
+import { currentModuleContext, currentModuleValue, runWithModuleContext } from "@/lib/module-context";
+import type { ModuleRuntimeContext } from "@/lib/module-context";
+export { currentModuleContext, currentModuleValue, runWithModuleContext };
+export type { ModuleRuntimeContext };
 /**
  * 模組 API 的宿主 runtime wrapper（P0-8）。
  *
@@ -15,15 +19,6 @@ import { NextRequest } from "next/server";
  * 模組自己的 `requireRole`／`assertSameOrigin`／`enforceRateLimit` 仍會執行，
  * 這裡是第二道防線；同時提供 `AsyncLocalStorage` 的模組上下文供後續功能使用。
  */
-export interface ModuleRuntimeContext {
-    moduleValue: string;
-    pathname: string;
-    method: string;
-}
-/** 目前請求所屬模組（不在模組 API 內時回 null） */
-export declare function currentModuleValue(): string | null;
-export declare function currentModuleContext(): ModuleRuntimeContext | null;
-export declare function runWithModuleContext<T>(context: ModuleRuntimeContext, fn: () => T): T;
 type RouteHandler = (request: NextRequest, context?: unknown) => Promise<Response> | Response;
 /**
  * 包裝單一 HTTP handler。
@@ -31,4 +26,3 @@ type RouteHandler = (request: NextRequest, context?: unknown) => Promise<Respons
  * @param handler 模組原本的 handler
  */
 export declare function withModuleRuntime<T extends RouteHandler>(moduleValue: string, handler: T): T;
-export {};
