@@ -3,6 +3,8 @@
  * 零依賴，供 `module-runtime.ts` 與測試共用。
  */
 export type RuntimeRole = "student" | "parent" | "staff" | "admin";
+/** 由頁面路徑前綴推導必要角色；無前綴回 null（僅要求登入） */
+export declare function roleFromPagePath(pathname: string): RuntimeRole | null;
 /** 由 API 路徑前綴推導必要角色；無前綴回 null（僅要求登入） */
 export declare function roleFromApiPath(pathname: string): RuntimeRole | null;
 /** 是否套用「功能模組啟用」閘門（與 build-time 規則一致：student／parent／staff） */
