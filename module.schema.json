@@ -9,6 +9,7 @@
   "properties": {
     "value": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]*$", "description": "全域唯一模組代碼（camelCase）" },
     "label": { "type": "string", "minLength": 1 },
+    "marketName": { "type": "string", "minLength": 1, "description": "市集卡片名稱（選填）；未設定時使用 label。功能入口仍以 label 顯示。" },
     "kind": { "const": "optional" },
     "status": { "enum": ["planned", "building", "live"], "description": "展示資訊；可否啟用由超級管理員總開關決定" },
     "description": { "type": "string", "minLength": 1 },

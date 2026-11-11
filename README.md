@@ -22,7 +22,7 @@
 
 ```bash
 # 靜態檢查（零依賴，Node ≥20）
-node bin/module-check.mjs <模組資料夾> [--host-version 0.695] [--json]
+node bin/module-check.mjs <模組資料夾> [--host-version 0.697] [--json]
 # 退出碼 0＝通過（warning 不擋）；1＝有 error
 
 # 影子 tsc（快照模式；需環境有 tsc，或借主程式的）
@@ -60,10 +60,16 @@ B 是衍生工具，不是規則來源；B 的 allowlist／snapshots 與 E／F�
 ## 穩定性承諾【E4】
 
 同一 `contractVersion`（目前 `1`）內，§3.3 允許面**只增不改不刪**；破壞性變更才遞增版本。
-`snapshots/` 已對應宿主 `0.695`（`HOST_SURFACE_SNAPSHOT`），由快照產生器從主程式宣告檔產生；
-`module:check` 預設也比對宿主 `0.695`（`DEFAULT_HOST_VERSION`，跟隨主程式目前版本）。
+`snapshots/` 已對應宿主 `0.697`（`HOST_SURFACE_SNAPSHOT`），由快照產生器從主程式宣告檔產生；
+`module:check` 預設也比對宿主 `0.697`（`DEFAULT_HOST_VERSION`，跟隨主程式目前版本）。
 `npm test` 的 golden modules 會同時跑 `module:check` 與影子 tsc（快照模式）；
 設定 `SHADOW_TSC_HOST=1` 可改用主程式真實型別的宿主模式。
+
+### 市集名稱與功能名稱
+
+1. `label` 是安裝後「功能入口卡片」顯示的名稱（例如「自主學習計畫」）。
+1. `marketName` 是選填的「市集卡片」名稱（例如「自主學習計畫（帥哥版）」）；未設定時市集沿用 `label`。
+1. 功能入口永遠使用 `label`，不會因為 `marketName` 而改變；同名模組同時安裝時，首頁會自動加上作者名區分。
 
 ## 邊界（讀懂這段才不會誤用）
 

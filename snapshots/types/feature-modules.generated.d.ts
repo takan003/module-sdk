@@ -1,6 +1,7 @@
 export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly value: "examRegistration";
     readonly label: "升學考試與模擬考校內報名";
+    readonly marketName: "升學考試與模擬考校內報名";
     readonly kind: "optional";
     readonly status: "live";
     readonly description: "校內升學考試與模擬考的報名、名單與造冊工具。\n\n【學生端】\n• 開放期間勾選選考科目，可修改、取消；截止後唯讀，可下載 PDF 留存。\n• 支援必／選報與不報名原因、繳費身分與費用試算、考試地點選擇、應考服務填寫與自行封存。\n• 場次依報名起訖自動顯示未開放／開放／已截止，未開放前不可送出。\n\n【教職員】\n• 兼導師可唯讀檢視本班各場次的班級完成狀態與報名名單。\n\n【管理端】\n• 建立場次與科目、指定年級班級、設定考試日期（可多日）與報名起訖、必／選報與費用。\n• 名單統計、班級區間匯出（全部／完成／未完成）、官方報名資料檔（學測、分科測驗、英聽、術科與通用格式）。\n• 可同步系統公告與行事曆；依權限解除封存、刪除登錄、硬刪除場次（連動名單）。\n\n【家長端】\n• 家長可唯讀查看名冊綁定子女的報名資料。";
@@ -8,8 +9,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "張家誠";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.1.57";
-        readonly releasedAt: "2026-11-10";
+        readonly version: "0.1.58";
+        readonly releasedAt: "2026-11-11";
     };
     readonly provides: {
         readonly student: true;
@@ -40,6 +41,10 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/exam-registration";
     };
     readonly changelog: [{
+        readonly version: "0.1.58";
+        readonly releasedAt: "2026-11-11";
+        readonly notes: ["module.json 新增選填 marketName（市集卡片名稱可與功能入口 label 分開）；目前與 label 相同，市集顯示不變。"];
+    }, {
         readonly version: "0.1.57";
         readonly releasedAt: "2026-11-10";
         readonly notes: ["匯出 CSV 時對 =、+、-、@ 開頭的儲存格加單引號，避免 Excel／Sheets 公式注入。"];
@@ -175,6 +180,7 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
 }, {
     readonly value: "identityTaxInquiry";
     readonly label: "註冊身分與財稅查調";
+    readonly marketName: "註冊身分與財稅查調";
     readonly kind: "optional";
     readonly status: "live";
     readonly description: "每學期註冊身分確認與必要時的財稅查調作業。\n\n【學生端】\n• 於學校開放期間確認本學期註冊身分別（一般生、原住民、低收入戶、中低收入戶、身心障礙等）。\n• 需要財稅查調時，依對象填寫父、母、本人或監護人的身分證字號，不收集查調對象姓名。\n• 每次送出確認均須重新同意個人資料授權；可先存草稿（不需同意），截止前可修改，截止後唯讀。\n\n【教職員】\n• 兼導師查看本班註冊身分確認進度與名冊。\n• 具財稅查調權限者可更新查調狀態（待查調／已查調／免查調）與備註。\n\n【管理端】\n• 設定學期開放起訖、身分別選項、需查調身分別、是否必填父母身分證字號與實施說明。\n• 查看全校確認進度與統計，匯出查調名冊（含父母、本人與監護人身分證字號）。\n\n【家長端】\n• 家長可唯讀查看子女本學期的註冊身分確認結果（身分證字號遮蔽顯示）。";
@@ -182,8 +188,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "takan003";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.1.32";
-        readonly releasedAt: "2026-11-09";
+        readonly version: "0.1.33";
+        readonly releasedAt: "2026-11-11";
     };
     readonly provides: {
         readonly student: true;
@@ -211,6 +217,10 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/identity-tax-inquiry";
     };
     readonly changelog: [{
+        readonly version: "0.1.33";
+        readonly releasedAt: "2026-11-11";
+        readonly notes: ["module.json 新增選填 marketName（市集卡片名稱可與功能入口 label 分開）；目前與 label 相同，市集顯示不變。"];
+    }, {
         readonly version: "0.1.32";
         readonly releasedAt: "2026-11-09";
         readonly notes: ["資料存取改用主程式 scopedDb；名冊核心集合維持唯讀。", "既有 API、資料結構與使用者操作不變。"];
@@ -346,6 +356,7 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
 }, {
     readonly value: "selfDirectedLearning";
     readonly label: "自主學習計畫";
+    readonly marketName: "自主學習計畫";
     readonly kind: "optional";
     readonly status: "live";
     readonly description: "自主學習計畫的申請、審核與進度紀錄。";
@@ -353,8 +364,8 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
     readonly author: {
         readonly author: "takan003";
         readonly authorUrl: "https://github.com/takan003";
-        readonly version: "0.0.149";
-        readonly releasedAt: "2026-11-09";
+        readonly version: "0.0.150";
+        readonly releasedAt: "2026-11-11";
     };
     readonly provides: {
         readonly student: true;
@@ -379,6 +390,10 @@ export declare const GENERATED_FEATURE_MODULES: readonly [{
         readonly admin: "/admin/self-directed-learning";
     };
     readonly changelog: [{
+        readonly version: "0.0.150";
+        readonly releasedAt: "2026-11-11";
+        readonly notes: ["module.json 新增選填 marketName（市集卡片名稱可與功能入口 label 分開）；目前與 label 相同，市集顯示不變。"];
+    }, {
         readonly version: "0.0.149";
         readonly releasedAt: "2026-11-09";
         readonly notes: ["資料存取改用主程式 scopedDb；名冊核心集合改為唯讀，並補上 rosterStudents 宣告。", "既有 API、資料結構與使用者操作不變。"];

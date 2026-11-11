@@ -96,6 +96,10 @@ export function validateManifest(m, opts = {}) {
     at(`value「${m.value}」與內建／管理端模組撞名（快照 ${"HOST_SURFACE_SNAPSHOT_0.388"}）`);
   }
   if (!isNonEmptyString(m.label)) at("缺少 label");
+  if (m.marketName !== undefined) {
+    if (!isString(m.marketName)) at("marketName 需為字串");
+    else if (m.marketName.length > 120) at("marketName 不可超過 120 字");
+  }
   if (m.kind !== "optional") at(`kind 需為 "optional"，實得 ${JSON.stringify(m.kind)}`);
   if (!STATUSES.includes(m.status)) at(`status 需為 ${STATUSES.join("／")} 之一`);
   if (!isNonEmptyString(m.description)) at("缺少 description");
